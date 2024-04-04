@@ -68,15 +68,15 @@
       sprite_style = sprite_style.substr(0, sprite_style.lastIndexOf("/"));
       
       if (sprite_style === 'mapbox://sprites/k6221/clu3253js025s01ra1ktn14qc') { // Light basemap
-        map.setPaintProperty('stations', 'circle-stroke-color', 'black');
-        map.setPaintProperty('stations', 'circle-radius', 6);
-        map.setPaintProperty('lines', 'line-color', 'green');
-        map.setPaintProperty('lines', 'line-width', 4);
+        map.setPaintProperty('stops', 'circle-stroke-color', 'black');
+        map.setPaintProperty('stops', 'circle-radius', 6);
+        map.setPaintProperty('routes', 'line-color', 'green');
+        map.setPaintProperty('routes', 'line-width', 4);
       } else { // close if: Dark basemap
-        map.setPaintProperty('stations', 'circle-stroke-color', 'white');
-        map.setPaintProperty('stations', 'circle-radius', 6);
-        map.setPaintProperty('lines', 'line-color', 'green');
-        map.setPaintProperty('lines', 'line-width', 4);
+        map.setPaintProperty('stops', 'circle-stroke-color', 'white');
+        map.setPaintProperty('stops', 'circle-radius', 6);
+        map.setPaintProperty('routes', 'line-color', 'green');
+        map.setPaintProperty('routes', 'line-width', 4);
       } // close else
     } // close clearMap
         
@@ -133,22 +133,22 @@
     function highlightStationsOnLine(shortName, sprite_style) {
       if (sprite_style === 'mapbox://sprites/k6221/clu3253js025s01ra1ktn14qc') {// Light basemap selected
         map.setPaintProperty('stops', 'circle-stroke-color', ['case',
-                                                                 ['==', ['get', 'route_short_name'], shortName], // red for clicked stop
-                                                                 'red', 
-                                                                 'black'
-                                                                ]); // close setPaintProperty Light
+                                                              ['==', ['get', 'route_short_name'], shortName], // red for clicked stop
+                                                              'red', 
+                                                              'black'
+                                                             ]); // close setPaintProperty Light
       } else {// Dark basemap selected // close if
-        map.setPaintProperty('stations', 'circle-stroke-color', ['case',
-                                                                 ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
-                                                                 'red', 
-                                                                 'white'
-                                                                ]); // close setPaintProperty Dark
+        map.setPaintProperty('stops', 'circle-stroke-color', ['case',
+                                                              ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
+                                                              'red', 
+                                                              'white'
+                                                             ]); // close setPaintProperty Dark
       } // close else
-      map.setPaintProperty('stations', 'circle-radius', ['case',
-                                                         ['==', ['get', 'route_short_name'], shortName],
-                                                         8,
-                                                         6
-                                                         ]); // c.ose setPaintProperty radius
+      map.setPaintProperty('stops', 'circle-radius', ['case',
+                                                      ['==', ['get', 'route_short_name'], shortName],
+                                                      8,
+                                                      6
+                                                     ]); // c.ose setPaintProperty radius
     }// close highlightStationsOnLine function
 
     // highlight an associated line
