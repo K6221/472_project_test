@@ -83,7 +83,7 @@
         
     function addLayersAfterStyleLoad() {
     // load line GeoJSON
-      fetch("https://raw.githubusercontent.com/UBC-GEOS472-Spring2024/group2-finalproject-private/blob/main/data/route.geojson").then(res => res.json()).then(routedata => {
+      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
         map.addSource('routes', {
           type: 'geojson',
           data: routedata
@@ -105,7 +105,7 @@
       }); // close fetch line
     
     //load stop GeoJSON 
-    fetch("https://raw.githubusercontent.com/UBC-GEOS472-Spring2024/group2-finalproject-private/blob/main/data/stops_routes.geojson").then(res => res.json()).then(stopdata => {
+    fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/stops_routes.geojson").then(res => res.json()).then(stopdata => {
         map.addSource('stops', {
           type: 'geojson',
           data: stopdata
