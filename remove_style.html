@@ -53,74 +53,74 @@
     } // close clearMap
         
         
-    function addLayersAfterStyleLoad() {
+
     // load line GeoJSON
-      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
-        map.addSource('routes', {
-          type: 'geojson',
-          data: routedata
-        });
-        // add to the map 
-        map.addLayer({
-          'id': 'routes',
-          'type': 'line',
-          'source': 'routes',
-          'paint': {
-            'line-color': "green", // assign green for line colour
-            'line-opacity': 1,
-            'line-width': 4,
-          }
+    fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
+      map.addSource('routes', {
+        type: 'geojson',
+        data: routedata
+      });
+      // add to the map 
+      map.addLayer({
+        'id': 'routes',
+        'type': 'line',
+        'source': 'routes',
+        'paint': {
+          'line-color': "green", // assign green for line colour
+          'line-opacity': 1,
+          'line-width': 4,
+        } // close paint
         }); // close map.addLayer
-      }); // close fetch line
+    }); // close fetch line
     
-    //load stop GeoJSON 
+    //load stop GeoJSON
     fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/stops_routes.geojson").then(res => res.json()).then(stopdata => {
-        map.addSource('stops', {
-          type: 'geojson',
-          data: stopdata
-        }); // close map.addSource
-        
-        map.addLayer({
-          'id': 'stops',
-          'type': 'circle',
-          'source': 'stops',
-          'paint': {
-            'circle-radius': 6,
-            'circle-color': 'white',
-            'circle-opacity': 0,
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1
-          } //close paint
+      map.addSource('stops', {
+        type: 'geojson',
+        data: stopdata
+      }); // close map.addSource
+      // add to the map
+      map.addLayer({
+        'id': 'stops',
+        'type': 'circle',
+        'source': 'stops',
+        'paint': {
+          'circle-radius': 6,
+          'circle-color': 'white',
+          'circle-opacity': 0,
+          'circle-stroke-color': 'white',
+          'circle-stroke-width': 1
+        } //close paint
         }); // close map.addLayer
     }); // close fetch
-  } // close addlayersafterstyleload
+
     
     // highlight function
     function highlightStationsOnLine(shortName, sprite_style) {
-    map.setPaintProperty('stops', 'circle-stroke-color', ['case',
-    ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
-    'red', 
-    'white']); // close setPaintProperty 
-    map.setPaintProperty('stops', 'circle-radius', ['case',
-    ['==', ['get', 'route_short_name'], shortName],
-    8,
-    6
-  ]); // c.ose setPaintProperty radius
-}// close highlightStationsOnLine function
+      map.setPaintProperty('stops', 'circle-stroke-color', ['case',
+                                                            ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
+                                                            'red', 
+                                                            'white']); // close setPaintProperty 
+      map.setPaintProperty('stops', 'circle-radius', ['case',
+                                                      ['==', ['get', 'route_short_name'], shortName],
+                                                      8,
+                                                      6
+                                                     ]); // c.ose setPaintProperty radius
+    }// close highlightStationsOnLine function
 
     // highlight an associated line
     function highlightAssociatedLine(shortName, sprite_style) {
-    map.setPaintProperty('routes', 'line-color', ['case',
-    ['==', ['get', 'routes_route_short_name'], shortName],
-    'yellow',
-    'green']); //close map.setPaintProperty
-
-    map.setPaintProperty('routes', 'line-width', ['case',
-    ['==', ['get', 'routes_route_short_name'], shortName],
-    8, // if it is an associated line, line width = 8 
-    4 // otherwise it is 4
-  ]); // close map.setPaintProperty width
-} // close highlightAssociatedLine
+      map.setPaintProperty('routes', 'line-color', ['case',
+                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    'yellow',
+                                                    'green']); //close map.setPaintProperty
+      
+      map.setPaintProperty('routes', 'line-width', ['case',
+                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    8, // if it is an associated line, line width = 8 
+                                                    4 // otherwise it is 4
+                                                    ]); // close map.setPaintProperty width
+    } // close highlightAssociatedLine
     
     
     map.on('click', 'stops', (e) => {
