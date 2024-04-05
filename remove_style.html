@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transportation Map of Metro Vancouver</title>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet'>
+
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position:absolute; top: 0; bottom:0; width: 100% }
+
+  </style>
+  
+</head>
+<body>
+  <style>
+
+    .clear-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: white;
+      padding: 10px;
+    }
+    
+  </style>
+  <div id="map"></div>
+
+  <div>
+    <button onclick="clearMap()" class="clear-button">Clear</button>
+  </div>
+
+  <script>
+    
+    // add base map 
+    mapboxgl.accessToken = 'pk.eyJ1IjoiazYyMjEiLCJhIjoiY2xzc2VyczZiMTJnMTJsbnlqYmY0eDBidCJ9.qYmhavVJJbDDzeyoAuTXeQ';
+
+    var map = new mapboxgl.Map({
+            container: 'map', 
+            style: 'mapbox://styles/k6221/cltxr4dy101ix01r5elg32b1a', 
+            center: [-123.1207, 49.2827], // set Vancouver as the centre
+            zoom: 9.3
+        });
+
+    // clear Map highlight function (makes it default)
+    function clearMap() {
+    map.setPaintProperty('stops', 'circle-stroke-color', 'white');
+    map.setPaintProperty('stops', 'circle-radius', 6);
+    map.setPaintProperty('routes', 'line-color', 'green');
+    map.setPaintProperty('routes', 'line-width', 4);
+    } // close clearMap
+        
+        
+    function addLayersAfterStyleLoad() {
+    // load line GeoJSON
+      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
+        map.addSource('routes', {
+          type: 'geojson',
+          data: routedata
+        });
+        // add to the map 
+        map.addLayer({
+          'id': 'routes',
+          'type': 'line',
+          'source': 'routes',
+          'paint': {
+            'line-color': "green", // assign green for line colour
+            'line-opacity': 1,
+            'line-width': 4,
+          }
+        }); // close map.addLayer
+      }); // close fetch line
+    
+    //load stop GeoJSON 
+    fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/stops_routes.geojson").then(res => res.json()).then(stopdata => {
+        map.addSource('stops', {
+          type: 'geojson',
+          data: stopdata
+        }); // close map.addSource
+        
+        map.addLayer({
+          'id': 'stops',
+          'type': 'circle',
+          'source': 'stops',
+          'paint': {
+            'circle-radius': 6,
+            'circle-color': 'white',
+            'circle-opacity': 0,
+            'circle-stroke-color': 'white',
+            'circle-stroke-width': 1
+          } //close paint
+        }); // close map.addLayer
+    }); // close fetch
+  } // close addlayersafterstyleload
+    
+    // highlight function
+    function highlightStationsOnLine(shortName, sprite_style) {
+    map.setPaintProperty('stops', 'circle-stroke-color', ['case',
+    ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
+    'red', 
+    'white']); // close setPaintProperty 
+    map.setPaintProperty('stops', 'circle-radius', ['case',
+    ['==', ['get', 'route_short_name'], shortName],
+    8,
+    6
+  ]); // c.ose setPaintProperty radius
+}// close highlightStationsOnLine function
+
+    // highlight an associated line
+    function highlightAssociatedLine(shortName, sprite_style) {
+    map.setPaintProperty('routes', 'line-color', ['case',
+    ['==', ['get', 'routes_route_short_name'], shortName],
+    'yellow',
+    'green']); //close map.setPaintProperty
+
+    map.setPaintProperty('routes', 'line-width', ['case',
+    ['==', ['get', 'routes_route_short_name'], shortName],
+    8, // if it is an associated line, line width = 8 
+    4 // otherwise it is 4
+  ]); // close map.setPaintProperty width
+} // close highlightAssociatedLine
+    
+    
+    map.on('click', 'stops', (e) => {
+      // remove previous highlights (make it default)
+      clearMap(); 
+      
+      const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
+      if (features.length > 0) {
+        const stop = features[0];
+        const shortName = stop.properties.route_short_name;
+        highlightStationsOnLine(shortName);
+        highlightAssociatedLine(shortName);
+      } else { // close if
+        clearMap();
+      } // close else
+      
+      // add popup
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<P><strong>Stop Name: </strong> ${e.features[0].properties.stop_name}</p>
+          <p><strong>Stop Code:</strong> ${e.features[0].properties.stop_code}</p>
+          <p><strong>Line:</strong> ${e.features[0].properties.route_short_name}</p>`
+        ) // cloase setHTML
+      .addTo(map);
+    }); // close map.on click function
+    
+    //change the cursor to a pointer when the mouse is over the station points
+    map.on('mouseenter', 'stops', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    }); // close mouseenter
+    
+    // change the cursor back to a pointer when it leaves the station points
+    map.on('mouseleave', 'stops', () => {
+      map.getCanvas().style.cursor = '';
+    }); // close mouseleave
+
+
+  </script>
+</body>
+</html>
