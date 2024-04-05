@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transportation Map of Metro Vancouver</title>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet'>
+
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position:absolute; top: 0; bottom:0; width: 100% }
+    .clear-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: white;
+      padding: 10px;
+    }
+  </style>
+  
+</head>
+<body>
+  <div id="map"></div>
+  <button onclick="clearMap()" class="clear-button">Clear</button>
+
+  <!-- Dropdown menu for selecting route_short_name -->
+  <div>
+    <label for="routeSelect">Select Route: </label>
+    <select id="routeSelect" onchange="updatePopup()">
+      <!-- Options will be added dynamically using JavaScript -->
+    </select>
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiazYyMjEiLCJhIjoiY2xzc2VyczZiMTJnMTJsbnlqYmY0eDBidCJ9.qYmhavVJJbDDzeyoAuTXeQ';
+
+    var map = new mapboxgl.Map({
+      container: 'map', 
+      style: 'mapbox://styles/k6221/cltxr4dy101ix01r5elg32b1a', 
+      center: [-123.1207, 49.2827], // set Vancouver as the centre
+      zoom: 9.3
+    });
+
+    function clearMap() {
+      map.setPaintProperty('stops', 'circle-stroke-color', 'white');
+      map.setPaintProperty('stops', 'circle-radius', 6);
+      map.setPaintProperty('routes', 'line-color', 'green');
+      map.setPaintProperty('routes', 'line-width', 4);
+    }
+
+    map.on('load', function() {
+      // Load route GeoJSON
+      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson")
+      .then(response => response.json())
+      .then(data => {
+        map.addSource('routes', {
+          type: 'geojson',
+          data: data
+        });
+        map.addLayer({
+          'id': 'routes',
+          'type': 'line',
+          'source': 'routes',
+          'paint': {
+            'line-color': 'green',
+            'line-opacity': 1,
+            'line-width': 4,
+          }
+        });
+      });
+
+      // Load stop GeoJSON
+      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/stops_routes.geojson")
+      .then(response => response.json())
+      .then(data => {
+        map.addSource('stops', {
+          type: 'geojson',
+          data: data
+        });
+        map.addLayer({
+          'id': 'stops',
+          'type': 'circle',
+          'source': 'stops',
+          'paint': {
+            'circle-radius': 6,
+            'circle-color': 'white',
+            'circle-opacity': 0,
+            'circle-stroke-color': 'white',
+            'circle-stroke-width': 1
+          }
+        });
+        
+        // Populate dropdown menu with route_short_name options
+        var routeSelect = document.getElementById('routeSelect');
+        var features = data.features;
+        features.forEach(feature => {
+          var route_short_name = feature.properties.route_short_name;
+          var option = document.createElement('option');
+          option.text = route_short_name;
+          option.value = route_short_name;
+          routeSelect.add(option);
+        });
+      });
+
+    });
+
+    function updatePopup() {
+      var routeSelect = document.getElementById('routeSelect');
+      var selectedRoute = routeSelect.value;
+      var popupContent = `<p><strong>Selected Route:</strong> ${selectedRoute}</p>`;
+      var popup = new mapboxgl.Popup()
+        .setHTML(popupContent);
+
+      // Update the popup content
+      map.on('click', 'stops', (e) => {
+        popup.setLngLat(e.lngLat)
+          .addTo(map);
+      });
+    }
+
+  </script>
+</body>
+</html>
