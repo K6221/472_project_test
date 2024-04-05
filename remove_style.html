@@ -96,7 +96,7 @@
 
     
     // highlight function
-    function highlightStationsOnLine(shortName, sprite_style) {
+    function highlightStationsOnLine(shortName) {
       map.setPaintProperty('stops', 'circle-stroke-color', ['case',
                                                             ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
                                                             'red', 
@@ -109,7 +109,7 @@
     }// close highlightStationsOnLine function
 
     // highlight an associated line
-    function highlightAssociatedLine(shortName, sprite_style) {
+    function highlightAssociatedLine(shortName) {
       map.setPaintProperty('routes', 'line-color', ['case',
                                                     ['==', ['get', 'routes_route_short_name'], shortName],
                                                     'yellow',
