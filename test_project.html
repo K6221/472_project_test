@@ -148,23 +148,21 @@
 function generatePopupContent(properties) {
   let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
   popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
-  popupHTML += `<p><strong>Line:</strong> `;
   if (Array.isArray(properties.route_short_name)) {
     properties.route_short_name.forEach(route => {
-      popupHTML += `<a href="#" onclick="routeClick('${route}')">${route}</a>, `;
+      popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
     });
-    popupHTML = popupHTML.slice(0, -2); // Remove the trailing comma and space
   } else {
-    popupHTML += `<a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a>`;
+    popupHTML += `<p><a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a></p>`;
   }
-  popupHTML += `</p>`;
   return popupHTML;
-} //close generate popup content
+}
 
 // Function to handle route click
 function routeClick(routeShortName) {
   alert(`Route ${routeShortName} clicked!`);
 }
+
 
     
     //change the cursor to a pointer when the mouse is over the station points
