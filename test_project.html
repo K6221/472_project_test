@@ -120,7 +120,20 @@
                                                     4 // otherwise it is 4
                                                     ]); // close map.setPaintProperty width
     } // close highlightAssociatedLine
-    
+
+    function highlightAssociatedRoute(routeShortName) {
+      map.setPaintProperty('routes', 'line-color', ['case',
+                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    'yellow',
+                                                    'green']); //close map.setPaintProperty
+      
+      map.setPaintProperty('routes', 'line-width', ['case',
+                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    8, // if it is an associated line, line width = 8 
+                                                    4 // otherwise it is 4
+                                                    ]); // close map.setPaintProperty width
+    } // close highlightAssociatedRoute
+      
     
     map.on('click', 'stops', (e) => {
   // remove previous highlights (make it default)
@@ -152,16 +165,17 @@ function generatePopupContent(properties) {
     properties.route_short_name.forEach(route => {
       popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
     });
-  } else {
+  } else { // close if
     popupHTML += `<p><a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a></p>`;
-  }
+  } // close else
   return popupHTML;
-}
-
-// Function to handle route click
-function routeClick(routeShortName) {
-  alert(`Route ${routeShortName} clicked!`);
-}
+} // close generatePopupContent
+    
+    // Function to handle route click
+    function routeClick(routeShortName) {
+      clearMap(); /// clear previous highlights
+      highlightAssociatedRoute(routeShortName); // highlight associated lines
+    } // close routeClick
 
 
     
@@ -174,11 +188,6 @@ function routeClick(routeShortName) {
     map.on('mouseleave', 'stops', () => {
       map.getCanvas().style.cursor = '';
     }); // close mouseleave
-
-    // Function to handle route click
-    function routeClick(routeShortName) {
-      alert(`Route ${routeShortName} clicked!`);
-    }
 
   </script>
 </body>
