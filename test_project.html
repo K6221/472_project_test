@@ -171,7 +171,7 @@
         properties.route_short_name.forEach(route => {
           popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
         });
-      } else { // close if
+      } else {
         popupHTML += `<p><a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a></p>`;
       } // close else
       return popupHTML;
