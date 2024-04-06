@@ -136,46 +136,47 @@
       
     
     map.on('click', 'stops', (e) => {
-  // remove previous highlights (make it default)
-  clearMap(); 
-  
-  const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
-  if (features.length > 0) {
-    const stop = features[0];
-    const routeShortNames = stop.properties.route_short_name;
-    highlightStationsOnLine(routeShortNames);
-    highlightAssociatedLine(routeShortNames);
-  } else { // close if
-    clearMap();
-  } // close else
-  
-  // add popup
-  const popupContent = generatePopupContent(features[0].properties);
-  new mapboxgl.Popup()
-    .setLngLat(e.lngLat)
-    .setHTML(popupContent)
-    .addTo(map);
-}); // close map.on click function
-
-// Function to generate popup content with clickable route_short_names
-function generatePopupContent(properties) {
-  let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
-  popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
-  if (Array.isArray(properties.route_short_name)) {
-    properties.route_short_name.forEach(route => {
-      popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
-    });
-  } else { // close if
-    popupHTML += `<p><a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a></p>`;
-  } // close else
-  return popupHTML;
-} // close generatePopupContent
+      // remove previous highlights (make it default)
+      clearMap(); 
+      
+      const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
+      if (features.length > 0) {
+        const stop = features[0];
+        const routeShortNames = stop.properties.route_short_name;
+        highlightStationsOnLine(routeShortNames);
+        highlightAssociatedLine(routeShortNames);
+      } else { // close if
+        clearMap();
+      } // close else
+      
+      // add popup
+      const popupContent = generatePopupContent(features[0].properties);
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(popupContent)
+        .addTo(map)
+    }); // close map.on click function
     
     // Function to handle route click
     function routeClick(routeShortName) {
       clearMap(); /// clear previous highlights
       highlightAssociatedRoute(routeShortName); // highlight associated lines
     } // close routeClick
+    
+    // Function to generate popup content with clickable route_short_names
+    function generatePopupContent(properties) {
+      let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
+      popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
+      if (Array.isArray(properties.route_short_name)) {
+        properties.route_short_name.forEach(route => {
+          popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
+        });
+      } else { // close if
+        popupHTML += `<p><a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a></p>`;
+      } // close else
+      return popupHTML;
+    } // close generatePopupContent
+
 
 
     
