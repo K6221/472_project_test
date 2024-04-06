@@ -123,29 +123,49 @@
     
     
     map.on('click', 'stops', (e) => {
-      // remove previous highlights (make it default)
-      clearMap(); 
-      
-      const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
-      if (features.length > 0) {
-        const stop = features[0];
-        const shortName = stop.properties.route_short_name;
-        highlightStationsOnLine(shortName);
-        highlightAssociatedLine(shortName);
-      } else { // close if
-        clearMap();
-      } // close else
-      
-      // add popup
-      new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(
-          `<P><strong>Stop Name: </strong> ${e.features[0].properties.stop_name}</p>
-          <p><strong>Stop Code:</strong> ${e.features[0].properties.stop_code}</p>
-          <p><strong>Line:</strong> <a href="#" onclick="routeClick('${e.features[0].properties.route_short_name}')">${e.features[0].properties.route_short_name}</a></p>`
-        ) // cloase setHTML
-      .addTo(map);
-    }); // close map.on click function
+  // remove previous highlights (make it default)
+  clearMap(); 
+  
+  const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
+  if (features.length > 0) {
+    const stop = features[0];
+    const routeShortNames = stop.properties.route_short_name;
+    highlightStationsOnLine(routeShortNames);
+    highlightAssociatedLine(routeShortNames);
+  } else { // close if
+    clearMap();
+  } // close else
+  
+  // add popup
+  const popupContent = generatePopupContent(features[0].properties);
+  new mapboxgl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML(popupContent)
+    .addTo(map);
+}); // close map.on click function
+
+// Function to generate popup content with clickable route_short_names
+function generatePopupContent(properties) {
+  let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
+  popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
+  popupHTML += `<p><strong>Line:</strong> `;
+  if (Array.isArray(properties.route_short_name)) {
+    properties.route_short_name.forEach(route => {
+      popupHTML += `<a href="#" onclick="routeClick('${route}')">${route}</a>, `;
+    });
+    popupHTML = popupHTML.slice(0, -2); // Remove the trailing comma and space
+  } else {
+    popupHTML += `<a href="#" onclick="routeClick('${properties.route_short_name}')">${properties.route_short_name}</a>`;
+  }
+  popupHTML += `</p>`;
+  return popupHTML;
+} //close generate popup content
+
+// Function to handle route click
+function routeClick(routeShortName) {
+  alert(`Route ${routeShortName} clicked!`);
+}
+
     
     //change the cursor to a pointer when the mouse is over the station points
     map.on('mouseenter', 'stops', () => {
