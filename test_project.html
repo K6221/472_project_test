@@ -166,6 +166,7 @@
     
     // Function to generate popup content with clickable route_short_names
     function generatePopupContent(properties) {
+      console.log('Route Short Name:', properties.route_short_name);
       let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
       popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
       if (Array.isArray(properties.route_short_name)) {
