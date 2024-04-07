@@ -166,22 +166,24 @@
     
     // Function to generate popup content with clickable route_short_names
     // Function to generate popup content with clickable route_short_names
+    // Function to generate popup content with clickable route_short_names
     function generatePopupContent(properties) {
       console.log('Route Short Name:', properties.route_short_name);
       let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
       popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
-      if (Array.isArray(properties.route_short_name)) {
-        properties.route_short_name.forEach(route => {
-          // Remove square brackets from routeShortName
-          route = route.replace(/\[|\]/g, ''); // This removes all occurrences of '[' and ']'
-          popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
-        });
-      } else {
-        let route = properties.route_short_name.replace(/\[|\]/g, ''); // This removes all occurrences of '[' and ']'
+      
+      // Remove square brackets and split the routeShortName by comma
+      let routes = properties.route_short_name.replace(/^\[|\]$/g, '').split(',');
+      // Create clickable links for each route
+      routes.forEach(route => {
+        route = route.trim(); // Remove leading/trailing spaces if any
         popupHTML += `<p><a href="#" onclick="routeClick('${route}')">${route}</a></p>`;
-      }
+      });
+      
       return popupHTML;
     }
+
+    
 
 
 
