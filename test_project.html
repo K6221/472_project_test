@@ -164,8 +164,7 @@
       highlightAssociatedRoute(routeShortName); // highlight associated lines
     } // close routeClick
 
-    
-    // Function to generate popup content with clickable route_short_names
+    // pop up function
     function generatePopupContent(properties) {
       console.log('Route Short Name:', properties.route_short_name);
       let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
@@ -173,15 +172,26 @@
       
       // Remove square brackets and split the routeShortName by comma
       let routes = properties.route_short_name.replace(/^\[|\]$/g, '').split(',');
+      
       // Create clickable links for each route
       routes.forEach(route => {
         route = route.trim(); // Remove leading/trailing spaces if any
         let routeShortName = route;
-        popupHTML += `<p><a href="#" onclick="routeClick('${routeShortName}')">${route}</a></p>`;
+        let routeLink = document.createElement('a');
+        routeLink.href = '#';
+        routeLink.textContent = route;
+        routeLink.addEventListener('click', function() {
+          routeClick(routeShortName);
+        }); // close addevent listener
+        
+        let routeParagraph = document.createElement('p');
+        routeParagraph.appendChild(routeLink);
+        popupHTML += routeParagraph.outerHTML;
       });
       
       return popupHTML;
-    }
+    } // close generate popup content
+
 
     
 
