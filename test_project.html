@@ -177,7 +177,8 @@
       // Create clickable links for each route
       routes.forEach(route => {
         route = route.trim(); // Remove leading/trailing spaces if any
-        popupHTML += `<p><a href="#" onclick="routeClick(${route})">${route}</a></p>`;
+        let routeShortName = route;
+        popupHTML += `<p><a href="#" onclick="routeClick('${routeShortName}')">${route}</a></p>`;
       });
       
       return popupHTML;
