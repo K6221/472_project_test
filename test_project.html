@@ -159,13 +159,12 @@
     
     // Function to handle route click
     function routeClick(routeShortName) {
-      console.log('Route Short Name:', routeShortName);
+      console.log('Route Short Name:', routeShortName); // check whether the function is called or not
       clearMap(); /// clear previous highlights
       highlightAssociatedRoute(routeShortName); // highlight associated lines
     } // close routeClick
+
     
-    // Function to generate popup content with clickable route_short_names
-    // Function to generate popup content with clickable route_short_names
     // Function to generate popup content with clickable route_short_names
     function generatePopupContent(properties) {
       console.log('Route Short Name:', properties.route_short_name);
