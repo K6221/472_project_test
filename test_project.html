@@ -158,9 +158,9 @@
       // Remove square brackets and split the routeShortName by comma
       let routes = properties.route_short_name.replace(/^\[|\]$/g, '').split(',');
       
-      // Create clickable links for each route
+      // Create clickable links (route short name) for each route
       routes.forEach(route => {
-        route = route.trim(); // Remove leading/trailing spaces if any
+        route = route.trim(); // Remove spaces if any
         let routeShortName = route;
         let routeLink = document.createElement('a');
         routeLink.href = '#';
