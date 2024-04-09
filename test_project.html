@@ -95,40 +95,27 @@
 
     
     // highlight function
-    function highlightStationsOnLine(shortName) {
+    function highlightStationsOnLine(routeShortName) {
       map.setPaintProperty('stops', 'circle-stroke-color', ['case',
-                                                            ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
+                                                            ['==', ['get', 'route_short_name'], routeShortName], // Yellow for clicked station
                                                             'red', 
                                                             'white']); // close setPaintProperty 
       map.setPaintProperty('stops', 'circle-radius', ['case',
-                                                      ['==', ['get', 'route_short_name'], shortName],
+                                                      ['==', ['get', 'route_short_name'], routeShortName],
                                                       8,
                                                       6
                                                      ]); // c.ose setPaintProperty radius
     }// close highlightStationsOnLine function
 
-    // highlight an associated line
-    function highlightAssociatedLine(shortName) {
-      map.setPaintProperty('routes', 'line-color', ['case',
-                                                    ['==', ['get', 'routes_route_short_name'], shortName],
-                                                    'yellow',
-                                                    'green']); //close map.setPaintProperty
-      
-      map.setPaintProperty('routes', 'line-width', ['case',
-                                                    ['==', ['get', 'routes_route_short_name'], shortName],
-                                                    8, // if it is an associated line, line width = 8 
-                                                    4 // otherwise it is 4
-                                                    ]); // close map.setPaintProperty width
-    } // close highlightAssociatedLine
 
     function highlightAssociatedRoute(routeShortName) {
       map.setPaintProperty('routes', 'line-color', ['case',
-                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    ['==', ['get', 'routes_route_short_name'], routeShortName],
                                                     'yellow',
                                                     'green']); //close map.setPaintProperty
       
       map.setPaintProperty('routes', 'line-width', ['case',
-                                                    ['==', ['get', 'routes_route_short_name'], shortName],
+                                                    ['==', ['get', 'routes_route_short_name'], routeShortName],
                                                     8, // if it is an associated line, line width = 8 
                                                     4 // otherwise it is 4
                                                     ]); // close map.setPaintProperty width
@@ -144,7 +131,6 @@
         const stop = features[0];
         const routeShortNames = stop.properties.route_short_name;
         highlightStationsOnLine(routeShortNames);
-        highlightAssociatedLine(routeShortNames);
       } else { // close if
         clearMap();
       } // close else
