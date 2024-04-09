@@ -162,8 +162,8 @@
       routes.forEach(route => {
         route = route.trim(); // Remove spaces if any
         let routeShortName = route;
-        let routeLink = document.createElement('a');
-        routeLink.href = '#';
+        let routeLink = document.createElement('p');
+        //routeLink.href = '#';
         routeLink.textContent = route;
         routeLink.addEventListener('click', function() {
           console.log(routeShortName);
