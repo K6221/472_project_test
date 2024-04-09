@@ -166,6 +166,7 @@
         routeLink.href = '#';
         routeLink.textContent = route;
         routeLink.addEventListener('click', function() {
+          console.log(routeShortName);
           routeClick(routeShortName);
         }); // close addevent listener
         console.log('Route Short Name After:', routeShortName);
