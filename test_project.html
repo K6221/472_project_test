@@ -125,15 +125,6 @@
       // remove previous highlights (make it default)
       clearMap(); 
       
-      const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
-      if (features.length > 0) {
-        const stop = features[0];
-        const routeShortNames = stop.properties.route_short_name;
-        highlightStationsOnLine(routeShortNames);
-      } else { // close if
-        clearMap();
-      } // close else
-      
       // add popup
       const popupContent = generatePopupContent(features[0].properties);
       new mapboxgl.Popup()
@@ -162,8 +153,8 @@
       routes.forEach(route => {
         route = route.trim(); // Remove spaces if any
         let routeShortName = route;
-        let routeLink = document.createElement('p');
-        //routeLink.href = '#';
+        let routeLink = document.createElement('a');
+        routeLink.href = '#';
         routeLink.textContent = route;
         routeLink.addEventListener('click', function() {
           console.log(routeShortName);
