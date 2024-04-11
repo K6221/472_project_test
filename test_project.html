@@ -119,6 +119,13 @@
                                                     4 // otherwise it is 4
                                                     ]); // close map.setPaintProperty width
     } // close highlightAssociatedRoute
+
+    function createRouteClickListener(routeShortName) {
+      return function() {
+        console.log(routeShortName);
+        routeClick(routeShortName);
+      };
+    } // close create route click listener function
       
     
     map.on('click', 'stops', (e) => {
@@ -157,10 +164,8 @@
         let routeLink = document.createElement('a');
         routeLink.href = '#';
         routeLink.textContent = route;
-        routeLink.addEventListener('click', function() {
-          console.log(routeShortName);
-          routeClick(routeShortName);
-        }); // close addevent listener
+        routeLink.addEventListener('click', createRouteClickListener(routeShortName));
+
         console.log('Route Short Name After:', routeShortName);
         
         let routeParagraph = document.createElement('p');
