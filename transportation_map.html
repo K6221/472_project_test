@@ -4,28 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transportation Map of Metro Vancouver</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet'>
 
   <style>
     body { margin: 0; padding: 0; }
     #map { position:absolute; top: 0; bottom:0; width: 100% }
-
   </style>
   
 </head>
 <body>
   <style>
-    .style-selector {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: white;
-      padding: 10px;
-      border-radius: 5px;
-      z-index: 1
-    }
 
     .clear-button {
       position: absolute;
@@ -37,19 +26,11 @@
     
   </style>
   <div id="map"></div>
-  
-  <div class="style-selector">
-        <input id="dark-basemap" type="radio" name="rtoggle" value="cltxr4dy101ix01r5elg32b1a" checked="checked">
-        <label for="dark-basemap">Dark basemap</label>
-        <input id="light-basemap" type="radio" name="rtoggle" value="clu3253js025s01ra1ktn14qc">
-        <label for="light-basemap">Light basemap</label>
-  </div>
 
   <div>
     <button onclick="clearMap()" class="clear-button">Clear</button>
   </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     
     // add base map 
@@ -64,144 +45,147 @@
 
     // clear Map highlight function (makes it default)
     function clearMap() {
-      let sprite_style = map.getStyle().sprite; // get Sprite URL
-      sprite_style = sprite_style.substr(0, sprite_style.lastIndexOf("/"));
-      
-      if (sprite_style === 'mapbox://sprites/k6221/clu3253js025s01ra1ktn14qc') { // Light basemap
-        map.setPaintProperty('stops', 'circle-stroke-color', 'black');
-        map.setPaintProperty('stops', 'circle-radius', 6);
-        map.setPaintProperty('routes', 'line-color', 'green');
-        map.setPaintProperty('routes', 'line-width', 4);
-      } else { // close if: Dark basemap
-        map.setPaintProperty('stops', 'circle-stroke-color', 'white');
-        map.setPaintProperty('stops', 'circle-radius', 6);
-        map.setPaintProperty('routes', 'line-color', 'green');
-        map.setPaintProperty('routes', 'line-width', 4);
-      } // close else
+    map.setPaintProperty('stops', 'circle-stroke-color', 'white');
+    map.setPaintProperty('stops', 'circle-radius', 6);
+    map.setPaintProperty('routes', 'line-color', '#007ec2');
+    map.setPaintProperty('routes', 'line-width', 4);
     } // close clearMap
         
         
-    function addLayersAfterStyleLoad() {
+
     // load line GeoJSON
-      fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
-        map.addSource('routes', {
-          type: 'geojson',
-          data: routedata
-        });
-        // add to the map 
-        map.addLayer({
-          'id': 'routes',
-          'type': 'line',
-          'source': 'routes',
-          'paint': {
-            'line-color': "green", // assign green for line colour
-            'line-opacity': 1,
-            'line-width': 4,
-          }
+    fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/route.geojson").then(res => res.json()).then(routedata => {
+      map.addSource('routes', {
+        type: 'geojson',
+        data: routedata
+      });
+      // add to the map 
+      map.addLayer({
+        'id': 'routes',
+        'type': 'line',
+        'source': 'routes',
+        'paint': {
+          'line-color': '#007ec2', 
+          'line-opacity': 1,
+          'line-width': 4,
+        } // close paint
         }); // close map.addLayer
-        if ((map.getStyle().layers.map((el) => {return el.id})).includes('stops')) {
-          clearMap(); // run this to make sure station data is already loaded
-        }
-      }); // close fetch line
+    }); // close fetch line
     
-    //load stop GeoJSON 
+    //load stop GeoJSON
     fetch("https://raw.githubusercontent.com/K6221/472_project_test/main/data/stops_routes.geojson").then(res => res.json()).then(stopdata => {
-        map.addSource('stops', {
-          type: 'geojson',
-          data: stopdata
-        }); // close map.addSource
-        
-        map.addLayer({
-          'id': 'stops',
-          'type': 'circle',
-          'source': 'stops',
-          'paint': {
-            'circle-radius': 6,
-            'circle-color': 'white',
-            'circle-opacity': 0,
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1
-          } //close paint
+      map.addSource('stops', {
+        type: 'geojson',
+        data: stopdata
+      }); // close map.addSource
+      // add to the map
+      map.addLayer({
+        'id': 'stops',
+        'type': 'circle',
+        'source': 'stops',
+        'paint': {
+          'circle-radius': 6,
+          'circle-color': 'white',
+          'circle-opacity': 0,
+          'circle-stroke-color': 'white',
+          'circle-stroke-width': 1
+        } //close paint
         }); // close map.addLayer
-      if ((map.getStyle().layers.map((el) => {return el.id})).includes('routes')) {
-        clearMap();
-      }; // close if includes
     }); // close fetch
-    } // close addlayersafterstyleload
+
     
     // highlight function
-    function highlightStationsOnLine(shortName, sprite_style) {
-      if (sprite_style === 'mapbox://sprites/k6221/clu3253js025s01ra1ktn14qc') {// Light basemap selected
-        map.setPaintProperty('stops', 'circle-stroke-color', ['case',
-                                                              ['==', ['get', 'route_short_name'], shortName], // red for clicked stop
-                                                              'red', 
-                                                              'black'
-                                                             ]); // close setPaintProperty Light
-      } else {// Dark basemap selected // close if
-        map.setPaintProperty('stops', 'circle-stroke-color', ['case',
-                                                              ['==', ['get', 'route_short_name'], shortName], // Yellow for clicked station
-                                                              'red', 
-                                                              'white'
-                                                             ]); // close setPaintProperty Dark
-      } // close else
+    function highlightStationsOnLine(routeShortName) {
+      map.setPaintProperty('stops', 'circle-stroke-color', ['case',
+                                                            ['==', ['get', 'route_short_name'], routeShortName], // Yellow for clicked station
+                                                            'red', 
+                                                            'white']); // close setPaintProperty 
       map.setPaintProperty('stops', 'circle-radius', ['case',
-                                                      ['==', ['get', 'route_short_name'], shortName],
+                                                      ['==', ['get', 'route_short_name'], routeShortName],
                                                       8,
                                                       6
                                                      ]); // c.ose setPaintProperty radius
     }// close highlightStationsOnLine function
 
-    // highlight an associated line
-    function highlightAssociatedLine(shortName, sprite_style) {
-      if (sprite_style === 'mapbox://sprites/k6221/clu3253js025s01ra1ktn14qc') {// Light basemap selected
-        map.setPaintProperty('routes', 'line-color', ['case',
-                                                     ['==', ['get', 'routes_route_short_name'], shortName],
-                                                     'black',
-                                                     'green'
-                                                    ]); // close map.setPaintProperty colour Light
-      } else { // Dark basemap
-        map.setPaintProperty('routes', 'line-color', ['case',
-                                                     ['==', ['get', 'routes_route_short_name'], shortName],
-                                                     'yellow',
-                                                     'green'
-                                                     ]); //close map.setPaintProperty colour Dark
-      }
+    function highlightAssociatedRoute(routeShortName) {
+      map.setPaintProperty('routes', 'line-color', ['case',
+                                                    ['==', ['get', 'routes_route_short_name'], routeShortName],
+                                                    'yellow',
+                                                    '#007ec2']); //close map.setPaintProperty
       
       map.setPaintProperty('routes', 'line-width', ['case',
-                                                   ['==', ['get', 'routes_route_short_name'], shortName],
-                                                   8, // if it is an associated line, line width = 8 
-                                                   4 // otherwise it is 4
-                                                   ]); // close map.setPaintProperty width
-    } // close highlightAssociatedLine
-    
+                                                    ['==', ['get', 'routes_route_short_name'], routeShortName],
+                                                    8, // if it is an associated line, line width = 8 
+                                                    4 // otherwise it is 4
+                                                    ]); // close map.setPaintProperty width
+    } // close highlightAssociatedRoute
+
+    function createRouteClickListener(routeShortName) {
+      return function() {
+        console.log(routeShortName);
+        routeClick(routeShortName);
+      };
+    } // close create route click listener function
+      
     
     map.on('click', 'stops', (e) => {
       // remove previous highlights (make it default)
       clearMap(); 
-      
       const features = map.queryRenderedFeatures(e.point, { layers: ['stops'] });
-      if (features.length > 0) {
-        const stop = features[0];
-        const shortName = stop.properties.route_short_name;
-        let sprite_style = map.getStyle().sprite;
-        sprite_style = sprite_style.substr(0, sprite_style.lastIndexOf("/")); 
-        highlightStationsOnLine(shortName, sprite_style);
-        highlightAssociatedLine(shortName, sprite_style);
-      } else { // close if
-        clearMap();
-      } // close else
       
       // add popup
+      const popupContent = generatePopupContent(features[0].properties);
       new mapboxgl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(
-          `<P><strong>Stop Name: </strong> ${e.features[0].properties.stop_name}</p>
-          <p><strong>Stop Code:</strong> ${e.features[0].properties.stop_code}</p>
-          <p><strong>Line:</strong> ${e.features[0].properties.route_short_name}</p>`
-        ) // cloase setHTML
-      .addTo(map);
+        .setDOMContent(popupContent)
+        .addTo(map)
     }); // close map.on click function
     
+    // Function to handle route click
+    function routeClick(routeShortName) {
+      console.log('Route Short Name:', routeShortName); // check whether the function is called or not
+      clearMap(); /// clear previous highlights
+      highlightAssociatedRoute(routeShortName); // highlight associated lines
+    } // close routeClick
+
+    // pop up function
+    function generatePopupContent(properties) {
+      console.log('Route Short Name:', properties.route_short_name);
+      var wrapper= document.createElement('div');
+      let popupHTML = `<p><strong>Stop Name: </strong> ${properties.stop_name}</p>`;
+      popupHTML += `<p><strong>Stop Code:</strong> ${properties.stop_code}</p>`;
+      wrapper.innerHTML= popupHTML;
+      
+      // Remove square brackets and split the routeShortName by comma      REMOVE " " 
+      let routes = properties.route_short_name.replace(/^[\[\]"]/g, '').replace(/"/g, '').replace(/["\]]/g, '').split(',');
+      
+      // Create clickable links (route short name) for each route
+      routes.forEach(route => {
+        route = route.trim(); // Remove spaces if any
+        let routeShortName = route;
+        let routeLink = document.createElement('a');
+        routeLink.href = '#';
+        routeLink.textContent = route;
+        routeLink.addEventListener('click', function(event) {
+          console.log('listener run. routeShortName is: '+routeShortName)
+          event.preventDefault();
+          console.log(routeShortName);
+          routeClick(routeShortName);
+          console.log('listener ending')
+        });
+        console.log(routeLink);
+
+        console.log('Route Short Name After:', routeShortName);
+        
+        let routeParagraph = document.createElement('p');
+        routeParagraph.appendChild(routeLink);
+        wrapper.appendChild(routeParagraph)// += routeParagraph.outerHTML;
+      });
+      
+      return wrapper;
+    } // close generate popup content
+
+
     //change the cursor to a pointer when the mouse is over the station points
     map.on('mouseenter', 'stops', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -211,22 +195,6 @@
     map.on('mouseleave', 'stops', () => {
       map.getCanvas().style.cursor = '';
     }); // close mouseleave
-    
-    map.on('style.load', () => {
-      addLayersAfterStyleLoad();
-    }); // close map.on style.load
-
-    // change base map style
-    const styleSelector = document.getElementsByClassName('style-selector')[0];
-    const inputs = styleSelector.getElementsByTagName('input');
-    
-    for (const input of inputs) {
-      input.onclick = () => {
-        const layerId = input.value;
-        map.setStyle(`mapbox://styles/k6221/${layerId}`);
-        clearMap();
-      }; // close input.onclick
-    } // close for loop
 
   </script>
 </body>
